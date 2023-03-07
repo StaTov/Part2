@@ -17,6 +17,7 @@ const App = () => {
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
     const [nameFilter, setNameFilter] = useState('')
+    
     const handleName = (event) =>
         setNewName(event.target.value)
     const handleNumber = (event) =>
