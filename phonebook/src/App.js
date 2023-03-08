@@ -5,6 +5,7 @@ import Persons from "./components/Persons";
 import NotificationAddPerson from "./components/NotificationAddPerson";
 import phoneBookService from "./services/phoneBookService";
 import ErrorNotFound from "./components/ErrorNotFound";
+import NotificationChangePhone from "./components/NotificationChangePhone";
 
 const App = () => {
 
@@ -14,6 +15,7 @@ const App = () => {
             .then(initialPersons => setPersons(initialPersons))
     }, [])
 
+    const [personChangePhone, setPersonChangePhone] = useState(null)
     const [deletedName, setDeletedName] = useState(null)
     const [message, setMessage] = useState(null)
     const [persons, setPersons] = useState([])
@@ -21,14 +23,18 @@ const App = () => {
     const [newNumber, setNewNumber] = useState('')
     const [nameFilter, setNameFilter] = useState('')
 
+    const showPhoneNumberChanged = (person) => {
+        setPersonChangePhone(person)
+        setTimeout(() => setPersonChangePhone(null), 5000)
+    }
     const showPersonDeleted = (person) => {
 
         setDeletedName(person)
-        setTimeout(() => setDeletedName(null), 8000)
+        setTimeout(() => setDeletedName(null), 5000)
     }
     const showAddPerson = (person) => {
         setMessage(`Added new ${person}`)
-        setTimeout(() => setMessage(null), 4000)
+        setTimeout(() => setMessage(null), 5000)
     }
     const handleName = (event) =>
         setNewName(event.target.value)
@@ -65,6 +71,7 @@ const App = () => {
                                 person === persons[i]
                                     ? response.data
                                     : person))
+                            showPhoneNumberChanged(newName)
                         })
                         .catch(error => {
                             showPersonDeleted(newName)
@@ -99,6 +106,7 @@ const App = () => {
 
             <h3>Add a new</h3>
             <NotificationAddPerson message={message}/>
+            <NotificationChangePhone person={personChangePhone}/>
             <ErrorNotFound deletedName={deletedName}/>
             <PersonForm
                 newNumber={newNumber}
