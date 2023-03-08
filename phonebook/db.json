@@ -2,28 +2,23 @@
   "persons": [
     {
       "name": "Arto Hella",
-      "number": " 043-7777777",
+      "number": "21-23-65464",
       "id": 9
     },
     {
-      "name": "Stanislav Tovach",
-      "number": "3234263346",
+      "name": "Peter Pan",
+      "number": "01-23-43423",
       "id": 10
     },
     {
-      "name": "Olya Tovch",
-      "number": "212-4453-234",
+      "name": "Anton Pie",
+      "number": "44-54-45342",
       "id": 11
     },
     {
-      "name": "Artur Petrosyan",
-      "number": "34-42342342534",
+      "name": "Good Boy",
+      "number": "11-32-4324",
       "id": 12
-    },
-    {
-      "name": "Ada Lovelace ",
-      "number": "3434-543545",
-      "id": 13
     }
   ]
 }

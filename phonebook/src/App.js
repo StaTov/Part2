@@ -2,8 +2,9 @@ import {useState, useEffect} from 'react'
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import NotificationAddPerson from "./components/NotificationAddPerson";
 import phoneBookService from "./services/phoneBookService";
-
+import ErrorNotFound from "./components/ErrorNotFound";
 
 const App = () => {
 
@@ -13,11 +14,22 @@ const App = () => {
             .then(initialPersons => setPersons(initialPersons))
     }, [])
 
+    const [deletedName, setDeletedName] = useState(null)
+    const [message, setMessage] = useState(null)
     const [persons, setPersons] = useState([])
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
     const [nameFilter, setNameFilter] = useState('')
-    
+
+    const showPersonDeleted = (person) => {
+
+        setDeletedName(person)
+        setTimeout(() => setDeletedName(null), 8000)
+    }
+    const showAddPerson = (person) => {
+        setMessage(`Added new ${person}`)
+        setTimeout(() => setMessage(null), 4000)
+    }
     const handleName = (event) =>
         setNewName(event.target.value)
     const handleNumber = (event) =>
@@ -31,37 +43,44 @@ const App = () => {
 
             setPersons(persons.filter(p => p.id !== id))
         }
-
     }
 
     const showPhoneBook = nameFilter
         ? persons.filter(person => person.name.toLowerCase().indexOf(nameFilter.toLowerCase()) !== -1)
         : persons
-    const handleSubmit = (event) => event.preventDefault()
-    const handleAdd = () => {
+
+    const handleSubmit = (event) => {
+        event.preventDefault()
         for (let i = 0; i < persons.length; i++) {
             if (persons[i].name.toLowerCase().trim() === newName.toLowerCase().trim()) {
 
                 if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
 
                     const userContact = {name: newName, number: newNumber}
-                    const personId = persons.find(p => p.name === newName).id
 
                     phoneBookService
-                        .update(personId, userContact)
-                        .then(response => setPersons(persons.map(person =>
-                            person.id === personId
-                                ? response.data
-                                : person)))
-
+                        .update(persons[i].id, userContact)
+                        .then(response => {
+                            setPersons([...persons].map(person =>
+                                person === persons[i]
+                                    ? response.data
+                                    : person))
+                        })
+                        .catch(error => {
+                            showPersonDeleted(newName)
+                            setPersons(persons.filter(person => person.name.toLowerCase().trim() !== newName.toLowerCase().trim()))
+                        })
 
                     setNewName('')
                     setNewNumber('')
+                    return
                 }
                 return
             }
         }
         const userContact = {name: newName, number: newNumber}
+
+        showAddPerson(newName)
 
         phoneBookService
             .create(userContact)
@@ -70,6 +89,7 @@ const App = () => {
                 setNewName('')
                 setNewNumber('')
             })
+
     }
 
     return (
@@ -78,13 +98,14 @@ const App = () => {
             <Filter nameFilter={nameFilter} handleNameFilter={handleNameFilter}/>
 
             <h3>Add a new</h3>
+            <NotificationAddPerson message={message}/>
+            <ErrorNotFound deletedName={deletedName}/>
             <PersonForm
                 newNumber={newNumber}
                 newName={newName}
                 handleName={handleName}
-                handleSubmit={handleSubmit}
                 handleNumber={handleNumber}
-                handleAdd={handleAdd}
+                handleSubmit={handleSubmit}
             />
 
             <h2>Numbers</h2>
