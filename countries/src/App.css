@@ -1,0 +1,9 @@
+* {
+    padding: 2px;
+    margin: 2px;
+    box-sizing: border-box;
+}
+
+li {
+    margin: 0 20px ;
+}
